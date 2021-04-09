@@ -19,7 +19,7 @@ def time_func(func):
 @time_func
 def lucas(n):
     #avoids from wrong input
-    if type(n) != int or n < 1:
+    if (type(n) != int) and (n < 1):
         raise ValueError("n must be a positive integer number")
 
     if n==0:
@@ -28,5 +28,5 @@ def lucas(n):
         return 1
     return lucas(n-1) + lucas(n-2)
 
-
-print(lucas(100))
+n= int(input('Please enter a number:'))
+print(lucas(n))
