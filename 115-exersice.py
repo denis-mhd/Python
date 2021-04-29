@@ -2,11 +2,11 @@ import websocket
 import json
 import time
 from datetime import datetime
-from collections import ChainMap
 
 fixedMinute = datetime.now().minute
-averagePriceManager = ChainMap() 
+averagePriceManager = {}
 prices = []
+volumes = []
 averagePriceManager[fixedMinute] = prices
 
 
@@ -14,6 +14,7 @@ def on_message(ws, message):
     global fixedMinute
     global averagePriceManager
     global prices
+    global volumes
     json_dict = json.loads(message)
     currentMinute = datetime.now().minute
     currentDatetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -23,18 +24,20 @@ def on_message(ws, message):
      
     if currentMinute != fixedMinute:
         averagePriceManager[fixedMinute] = prices
-        getAveragePricePerMinute(averagePriceManager)
+        getAveragePricePerMinute(averagePriceManager, volumes)
         prices = []
+        volumes = []
         averagePriceManager[fixedMinute] = prices
         fixedMinute = currentMinute
     else:
-        prices.append(float(price))
+        prices.append(float(price*volume))
+        volumes.append(volume)
 
       
-def getAveragePricePerMinute(averagePriceManager):
+def getAveragePricePerMinute(averagePriceManager, volumes):
     sumOfPricesPerMinute = sum(averagePriceManager[fixedMinute])
-    pricePositionsPerMinute = len(averagePriceManager[fixedMinute])
-    print(sumOfPricesPerMinute/pricePositionsPerMinute)
+    volumesPerMinute = sum(volumes)
+    print(sumOfPricesPerMinute/volumesPerMinute)
     
     
 
